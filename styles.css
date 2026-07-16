@@ -1,0 +1,102 @@
+/* RTL Hebrew for Slack — styles
+   Classes here are toggled by content.js based on majority-script detection.
+   Selectors verified live against app.slack.com (2026-07-13).
+
+   NOTE: @font-face rules are NOT declared here. A relative url() in a
+   content_scripts CSS file resolves against the *host page's* URL
+   (confirmed live: it requested app.slack.com/client/.../fonts/Rubik.woff2,
+   not the extension package), not the extension origin. content.js injects
+   the @font-face rules itself via chrome.runtime.getURL(), which resolves
+   correctly. */
+
+/* ---- message text ---- */
+
+.p-rich_text_block.rtlheb-msg,
+.p-rich_text_block.rtlheb-msg .p-rich_text_section {
+  /* Force RTL base direction. NOT unicode-bidi:plaintext — that auto-detects
+     each line from its first strong character, which LEFT-aligns a Hebrew
+     message that happens to start with an English word (and per-line it
+     mirrors a parenthetical like "(chrome extension)" that sits inside an
+     RTL line). Instead we force rtl and isolate the Latin runs themselves
+     as LTR islands (.rtlheb-ltr, wrapped by content.js) so English words,
+     numbers, and parentheses read correctly within the RTL flow. */
+  direction: rtl !important;
+  text-align: right !important;
+  font-family: var(--rtlheb-font, inherit) !important;
+  font-size: var(--rtlheb-font-size, inherit) !important;
+  /* Keeps text visually the same size while the Hebrew webfont is still
+     loading (font-display: swap uses the fallback briefly) — avoids the
+     line-height jump that happens when a fallback's x-height differs from
+     the real font's. Baseline since 2024 (Chrome/Edge 127+, Safari 17+). */
+  font-size-adjust: from-font;
+}
+
+/* Latin/English runs inside an RTL message, wrapped by content.js. Isolating
+   each run as its own LTR island is what keeps "(chrome extension)" from
+   mirroring to ")chrome extension(" when it sits inside a Hebrew line. */
+.p-rich_text_block.rtlheb-msg .rtlheb-ltr {
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+}
+
+/* code must never flip, regardless of surrounding direction */
+.p-rich_text_block.rtlheb-msg code,
+.p-rich_text_block.rtlheb-msg pre {
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: embed !important;
+  font-family: inherit !important;
+}
+
+/* links/dates/mentions keep natural inline direction but shouldn't force
+   the whole RTL line to re-wrap oddly */
+.p-rich_text_block.rtlheb-msg a {
+  unicode-bidi: isolate;
+}
+
+/* lists: mirror the marker to the right */
+.p-rich_text_block.rtlheb-msg ul,
+.p-rich_text_block.rtlheb-msg ol {
+  padding-right: 20px;
+  padding-left: 0;
+  text-align: right;
+}
+
+/* blockquote: mirror the accent bar to the right */
+.p-rich_text_block.rtlheb-msg blockquote {
+  border-right: 4px solid currentColor;
+  border-left: none;
+  padding-right: 12px;
+  padding-left: 0;
+  text-align: right;
+}
+
+/* ---- what this file deliberately does NOT touch ----
+   No rules for the gutter, avatar, sender, timestamp, reactions, thread
+   header/counter, day dividers, tabs, sidebar, or any Slack structural
+   element. An earlier version mirrored .c-message_kit__gutter with
+   row-reverse + direction:rtl — that reversed English metadata ("1 hour
+   ago" rendered as "hour ago 1") and detached metadata from messages.
+   RTL is applied ONLY to the message-text container (.p-rich_text_block)
+   and the composer's own contenteditable. */
+
+/* ---- composer (message input box) ---- */
+
+[data-qa="texty_input"].rtlheb-composer-rtl {
+  text-align: right !important;
+  font-family: var(--rtlheb-font, inherit) !important;
+  font-size: var(--rtlheb-font-size, inherit) !important;
+  font-size-adjust: from-font;
+  /* Per-line auto direction. Without this the composer forced every line to
+     an RTL base, so a lone parenthetical like "(chrome extension)" mirrored
+     to ")chrome extension(". plaintext detects each line's own direction from
+     its first strong character, so mixed Hebrew/Latin/parens stay correct.
+     (Message text already gets this above; the composer was the only gap.) */
+  unicode-bidi: plaintext !important;
+}
+
+[data-qa="texty_input"].rtlheb-composer-rtl code,
+[data-qa="texty_input"].rtlheb-composer-rtl pre {
+  direction: ltr !important;
+  text-align: left !important;
+}

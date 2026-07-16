@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>RTL Hebrew for Slack</title>
+<style>
+  /* Plain relative url() works here (unlike in the content-script CSS)
+     because popup.html is itself served from the extension's own origin. */
+  @font-face { font-family: 'RTLHeb Assistant'; src: url('fonts/Assistant.woff2') format('woff2'); font-display: swap; }
+  @font-face { font-family: 'RTLHeb Rubik'; src: url('fonts/Rubik.woff2') format('woff2'); font-display: swap; }
+  @font-face { font-family: 'RTLHeb Heebo'; src: url('fonts/Heebo.woff2') format('woff2'); font-display: swap; }
+  @font-face { font-family: 'RTLHeb Noto Sans Hebrew'; src: url('fonts/NotoSansHebrew.woff2') format('woff2'); font-display: swap; }
+  @font-face { font-family: 'RTLHeb Frank Ruhl Libre'; src: url('fonts/FrankRuhlLibre.woff2') format('woff2'); font-display: swap; }
+  @font-face { font-family: 'RTLHeb Secular One'; src: url('fonts/SecularOne.woff2') format('woff2'); font-display: swap; }
+  @font-face { font-family: 'RTLHeb Suez One'; src: url('fonts/SuezOne.woff2') format('woff2'); font-display: swap; }
+
+  :root { color-scheme: light dark; }
+  body {
+    width: 280px;
+    margin: 0;
+    padding: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #1a1d21;
+    color: #f7f7f7;
+  }
+  h1 {
+    font-size: 15px;
+    margin: 0 0 4px;
+  }
+  p.tagline {
+    font-size: 12px;
+    color: #ababad;
+    margin: 0 0 16px;
+  }
+  .popup-shell {
+    --settings-opacity: 1;
+  }
+  .popup-shell:has(#enabled:not(:checked)) {
+    --settings-opacity: 0.45;
+  }
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0;
+    padding: 10px 0 12px;
+    border-bottom: 1px solid #383a3e;
+  }
+  .toggle-copy {
+    display: grid;
+    gap: 2px;
+  }
+  .toggle-title {
+    font-size: 13px;
+    font-weight: 650;
+  }
+  .toggle-status {
+    font-size: 11px;
+    font-weight: 400;
+    color: #ababad;
+  }
+  .switch {
+    position: relative;
+    flex: 0 0 auto;
+    width: 38px;
+    height: 22px;
+    margin: 0;
+  }
+  .switch input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .switch-track {
+    position: absolute;
+    inset: 0;
+    border: 1px solid #6b6d70;
+    border-radius: 999px;
+    background: #383a3e;
+    cursor: pointer;
+    transition: background-color 120ms ease, border-color 120ms ease;
+  }
+  .switch-track::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 2px;
+    left: 2px;
+    border-radius: 50%;
+    background: #f7f7f7;
+    transition: transform 120ms ease;
+  }
+  .switch input:checked + .switch-track {
+    background: #2d7ff9;
+    border-color: #74aeff;
+  }
+  .switch input:checked + .switch-track::after {
+    transform: translateX(16px);
+  }
+  .switch input:focus-visible + .switch-track {
+    outline: 2px solid #9dccff;
+    outline-offset: 3px;
+  }
+  .settings-controls {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    opacity: var(--settings-opacity);
+    transition: opacity 120ms ease;
+  }
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    margin-top: 14px;
+  }
+  select, input[type="range"] {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  select {
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid #494b4d;
+    background: #222529;
+    color: #f7f7f7;
+    font-size: 13px;
+  }
+  .size-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .size-row output {
+    font-size: 12px;
+    min-width: 32px;
+    text-align: right;
+  }
+  .preview {
+    margin-top: 14px;
+    padding: 10px;
+    border-radius: 6px;
+    background: #222529;
+    border: 1px solid #494b4d;
+    font-size: 14px;
+    direction: rtl;
+    text-align: right;
+  }
+  .review-card {
+    margin-top: 16px;
+    padding: 10px 12px;
+    border: 1px solid #494b4d;
+    border-radius: 6px;
+    background: #222529;
+    font-size: 11px;
+    line-height: 1.45;
+    color: #ababad;
+  }
+  .review-card p {
+    margin: 0 0 5px;
+  }
+  .review-card a {
+    color: #9dccff;
+    font-weight: 650;
+    text-underline-offset: 2px;
+  }
+  .review-card a:hover {
+    color: #c6e2ff;
+  }
+  .review-card a:focus-visible {
+    outline: 2px solid #9dccff;
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  .footer {
+    margin-top: 16px;
+    font-size: 11px;
+    color: #7a7c7e;
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+  <main class="popup-shell">
+    <h1>RTL for Slack</h1>
+    <p class="tagline">Hebrew &amp; Arabic right-to-left — free, no account, no license key.</p>
+
+    <div class="toggle-row">
+      <div class="toggle-copy">
+        <span class="toggle-title" id="enabledLabel">Extension</span>
+        <span class="toggle-status" id="enabledStatus" aria-live="polite">On</span>
+      </div>
+      <label class="switch" for="enabled">
+        <input type="checkbox" id="enabled" aria-labelledby="enabledLabel enabledStatus" checked />
+        <span class="switch-track" aria-hidden="true"></span>
+      </label>
+    </div>
+
+    <fieldset class="settings-controls" id="settingsControls">
+      <label for="font">Hebrew font</label>
+      <select id="font">
+        <option value="default">Default (Slack's font)</option>
+        <option value="assistant">Assistant</option>
+        <option value="rubik">Rubik</option>
+        <option value="heebo">Heebo</option>
+        <option value="noto">Noto Sans Hebrew</option>
+        <option value="frank">Frank Ruhl Libre</option>
+        <option value="secular">Secular One</option>
+        <option value="suez">Suez One</option>
+      </select>
+
+      <label for="fontSize">Font size</label>
+      <div class="size-row">
+        <input type="range" id="fontSize" min="12" max="22" step="1" />
+        <output id="fontSizeOut"></output>
+      </div>
+
+      <div class="preview" id="preview">שלום, כך ייראה הטקסט שלך</div>
+    </fieldset>
+
+    <aside class="review-card" aria-label="Support this free extension">
+      <p>This extension is completely free. If it helps, a quick review is all I ask.</p>
+      <a href="https://chromewebstore.google.com/detail/kkglhicljbajpdbmhohodoafmmnmmdfm/reviews" target="_blank" rel="noopener noreferrer">Leave a review ↗</a>
+    </aside>
+
+    <p class="footer">Applies instantly to Slack — no reload needed.<br />Nothing here ever leaves your browser.</p>
+  </main>
+
+  <script src="popup.js"></script>
+</body>
+</html>
