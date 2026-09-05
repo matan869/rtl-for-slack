@@ -1,0 +1,49 @@
+{
+  "extName": {
+    "message": "RTL for Slack: راست‌چین فارسی، عربی و عبری",
+    "description": "Extension name shown in the Chrome Web Store and the browser."
+  },
+  "extDesc": {
+    "message": "Slack را برای فارسی، عربی، اردو و عبری راست‌چین کنید: چینش درست، پرانتزها، فونت‌ها و جهت تایپ زنده.",
+    "description": "Short store description, 132 characters max."
+  },
+  "tagline": {
+    "message": "راست‌چین برای فارسی، عربی، عبری و اردو — رایگان، بدون حساب، بدون کد لایسنس."
+  },
+  "extension": {
+    "message": "افزونه"
+  },
+  "on": {
+    "message": "روشن"
+  },
+  "off": {
+    "message": "خاموش"
+  },
+  "fontArabic": {
+    "message": "فونت فارسی / عربی / اردو"
+  },
+  "fontHebrew": {
+    "message": "فونت عبری"
+  },
+  "fontDefault": {
+    "message": "پیش‌فرض (فونت Slack)"
+  },
+  "fontSize": {
+    "message": "اندازهٔ فونت"
+  },
+  "preview": {
+    "message": "سلام، متن شما این‌گونه دیده می‌شود · שלום, כך ייראה הטקסט"
+  },
+  "reviewAsk": {
+    "message": "این افزونه کاملاً رایگان است. اگر مفید بود، یک نظر کوتاه تنها چیزی است که می‌خواهم."
+  },
+  "reviewLink": {
+    "message": "ثبت نظر ↗"
+  },
+  "footerA": {
+    "message": "بی‌درنگ روی Slack اعمال می‌شود — بدون بارگذاری دوباره."
+  },
+  "footerB": {
+    "message": "هیچ چیز از مرورگر شما خارج نمی‌شود."
+  }
+}

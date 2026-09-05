@@ -197,12 +197,12 @@
 <body>
   <main class="popup-shell">
     <h1>RTL for Slack</h1>
-    <p class="tagline">Right-to-left for Arabic, Persian, Hebrew and Urdu — free, no account, no license key.</p>
+    <p class="tagline" data-i18n="tagline"></p>
 
     <div class="toggle-row">
       <div class="toggle-copy">
-        <span class="toggle-title" id="enabledLabel">Extension</span>
-        <span class="toggle-status" id="enabledStatus" aria-live="polite">On</span>
+        <span class="toggle-title" id="enabledLabel" data-i18n="extension"></span>
+        <span class="toggle-status" id="enabledStatus" aria-live="polite"></span>
       </div>
       <label class="switch" for="enabled">
         <input type="checkbox" id="enabled" aria-labelledby="enabledLabel enabledStatus" checked />
@@ -211,9 +211,9 @@
     </div>
 
     <fieldset class="settings-controls" id="settingsControls">
-      <label for="fontArabic">Arabic / Persian / Urdu font</label>
+      <label for="fontArabic" data-i18n="fontArabic"></label>
       <select id="fontArabic">
-        <option value="default">Default (Slack's font)</option>
+        <option value="default" data-i18n="fontDefault"></option>
         <option value="vazirmatn">Vazirmatn</option>
         <option value="cairo">Cairo</option>
         <option value="naskh">Noto Naskh Arabic</option>
@@ -221,9 +221,9 @@
         <option value="nastaliq">Noto Nastaliq Urdu</option>
       </select>
 
-      <label for="font">Hebrew font</label>
+      <label for="font" data-i18n="fontHebrew"></label>
       <select id="font">
-        <option value="default">Default (Slack's font)</option>
+        <option value="default" data-i18n="fontDefault"></option>
         <option value="assistant">Assistant</option>
         <option value="rubik">Rubik</option>
         <option value="heebo">Heebo</option>
@@ -233,21 +233,21 @@
         <option value="suez">Suez One</option>
       </select>
 
-      <label for="fontSize">Font size</label>
+      <label for="fontSize" data-i18n="fontSize"></label>
       <div class="size-row">
         <input type="range" id="fontSize" min="12" max="22" step="1" />
         <output id="fontSizeOut"></output>
       </div>
 
-      <div class="preview" id="preview" dir="rtl">مرحبا، هكذا سيبدو النص · שלום, כך ייראה הטקסט</div>
+      <div class="preview" id="preview" dir="rtl" data-i18n="preview"></div>
     </fieldset>
 
     <aside class="review-card" aria-label="Support this free extension">
-      <p>This extension is completely free. If it helps, a quick review is all I ask.</p>
-      <a href="https://chromewebstore.google.com/detail/kkglhicljbajpdbmhohodoafmmnmmdfm/reviews" target="_blank" rel="noopener noreferrer">Leave a review ↗</a>
+      <p data-i18n="reviewAsk"></p>
+      <a href="https://chromewebstore.google.com/detail/kkglhicljbajpdbmhohodoafmmnmmdfm/reviews" target="_blank" rel="noopener noreferrer" data-i18n="reviewLink"></a>
     </aside>
 
-    <p class="footer">Applies instantly to Slack — no reload needed.<br />Nothing here ever leaves your browser.</p>
+    <p class="footer"><span data-i18n="footerA"></span><br /><span data-i18n="footerB"></span></p>
   </main>
 
   <script src="popup.js"></script>

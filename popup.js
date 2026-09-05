@@ -17,6 +17,23 @@
 
   const DEFAULT_SIZE = 15;
 
+  // Every visible string comes from _locales/<lang>/messages.json, so the popup
+  // renders in the user's own language. `dir` is set from the resolved locale
+  // rather than hard-coded, because four of the five locales are right-to-left.
+  const t = (k) => (ext && ext.i18n ? ext.i18n.getMessage(k) : '') || '';
+  function localize() {
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+      const msg = t(el.dataset.i18n);
+      if (msg) el.textContent = msg;
+    });
+    const lang = (ext && ext.i18n ? ext.i18n.getUILanguage() : 'en').split('-')[0];
+    if (['ar', 'fa', 'he', 'ur', 'ps', 'ku', 'sd', 'ug'].includes(lang)) {
+      document.documentElement.lang = lang;
+      document.documentElement.dir = 'rtl';
+    }
+  }
+  localize();
+
   // Arabic-script faces are declared with an Arabic-only unicode-range and the
   // Hebrew ones with a Hebrew-only range, so the preview can name both at once
   // and each half of the sample string picks up its own font.
@@ -55,7 +72,7 @@
 
   function updateEnabledUI() {
     const enabled = enabledInput.checked;
-    enabledStatus.textContent = enabled ? 'On' : 'Off';
+    enabledStatus.textContent = enabled ? t('on') : t('off');
     settingsControls.disabled = !enabled;
   }
 

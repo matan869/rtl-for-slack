@@ -105,6 +105,51 @@ const comp = await page.evaluate(() => {
 ok('composer gets the rtl class', comp.cls);
 ok('composer uses plaintext bidi', comp.bidi === 'plaintext', comp.bidi);
 
+// --- locales -----------------------------------------------------------------
+const LOC = path.join(ROOT, '_locales');
+const locales = fs.readdirSync(LOC).sort();
+ok('default_locale is present in _locales', locales.includes(manifest.default_locale), locales.join(','));
+const enMsgs = JSON.parse(fs.readFileSync(path.join(LOC, manifest.default_locale, 'messages.json'), 'utf8'));
+for (const loc of locales) {
+  const m = JSON.parse(fs.readFileSync(path.join(LOC, loc, 'messages.json'), 'utf8'));
+  const missing = Object.keys(enMsgs).filter((k) => !m[k] || !m[k].message);
+  ok(`${loc}: every message key present`, missing.length === 0, missing.join(','));
+  ok(`${loc}: store name within 75 chars`, m.extName.message.length <= 75, String(m.extName.message.length));
+  ok(`${loc}: store summary within 132 chars`, m.extDesc.message.length <= 132, String(m.extDesc.message.length));
+}
+// The manifest must reference the messages, not hard-coded English.
+ok('manifest name is localized', manifest.name === '__MSG_extName__', manifest.name);
+ok('manifest description is localized', manifest.description === '__MSG_extDesc__', manifest.description);
+// Every data-i18n key in the popup must exist, or the element renders blank.
+const popupHtml = fs.readFileSync(path.join(ROOT, 'popup.html'), 'utf8');
+const keys = [...popupHtml.matchAll(/data-i18n="([^"]+)"/g)].map((m) => m[1]);
+ok('popup uses i18n keys', keys.length >= 10, String(keys.length));
+ok('every popup i18n key exists in en', keys.every((k) => enMsgs[k]), keys.filter((k) => !enMsgs[k]).join(','));
+
+// --- popup renders in every locale ------------------------------------------
+for (const loc of locales) {
+  const msgs = JSON.parse(fs.readFileSync(path.join(LOC, loc, 'messages.json'), 'utf8'));
+  const pop = await browser.newPage({ viewport: { width: 340, height: 620 } });
+  await pop.addInitScript(([m, l]) => {
+    window.chrome = {
+      i18n: { getMessage: (k) => (m[k] ? m[k].message : ''), getUILanguage: () => l },
+      storage: { local: { get: async () => ({ enabled: true }), set: async () => {} }, onChanged: { addListener() {} } },
+    };
+  }, [msgs, loc]);
+  await pop.goto('file://' + path.join(ROOT, 'popup.html'));
+  await pop.waitForTimeout(250);
+  const info = await pop.evaluate(() => ({
+    blanks: [...document.querySelectorAll('[data-i18n]')].filter((e) => !e.textContent.trim()).map((e) => e.dataset.i18n),
+    dir: document.documentElement.dir || 'ltr',
+    overflowX: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+  }));
+  ok(`${loc}: no blank popup strings`, info.blanks.length === 0, info.blanks.join(','));
+  ok(`${loc}: popup direction`, info.dir === (loc === 'en' ? 'ltr' : 'rtl'), info.dir);
+  ok(`${loc}: popup does not overflow horizontally`, !info.overflowX);
+  await pop.screenshot({ path: `/tmp/popup-${loc}.png` });
+  await pop.close();
+}
+
 await browser.close();
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

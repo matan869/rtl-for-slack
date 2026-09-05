@@ -1,0 +1,49 @@
+{
+  "extName": {
+    "message": "RTL for Slack: العربية والفارسية والأردية من اليمين إلى اليسار",
+    "description": "Extension name shown in the Chrome Web Store and the browser."
+  },
+  "extDesc": {
+    "message": "اجعل Slack يعرض العربية والفارسية والأردية والعبرية من اليمين إلى اليسار: محاذاة صحيحة وأقواس وخطوط واتجاه كتابة مباشر.",
+    "description": "Short store description, 132 characters max."
+  },
+  "tagline": {
+    "message": "من اليمين إلى اليسار للعربية والفارسية والعبرية والأردية — مجاني، بلا حساب، بلا مفتاح ترخيص."
+  },
+  "extension": {
+    "message": "الإضافة"
+  },
+  "on": {
+    "message": "مُفعّلة"
+  },
+  "off": {
+    "message": "متوقفة"
+  },
+  "fontArabic": {
+    "message": "خط العربية والفارسية والأردية"
+  },
+  "fontHebrew": {
+    "message": "الخط العبري"
+  },
+  "fontDefault": {
+    "message": "الافتراضي (خط Slack)"
+  },
+  "fontSize": {
+    "message": "حجم الخط"
+  },
+  "preview": {
+    "message": "مرحبا، هكذا سيبدو النص · שלום, כך ייראה הטקסט"
+  },
+  "reviewAsk": {
+    "message": "هذه الإضافة مجانية بالكامل. إن كانت مفيدة، تقييم سريع هو كل ما أطلبه."
+  },
+  "reviewLink": {
+    "message": "اكتب تقييمًا ↗"
+  },
+  "footerA": {
+    "message": "يُطبَّق فورًا على Slack — دون إعادة تحميل."
+  },
+  "footerB": {
+    "message": "لا شيء هنا يغادر متصفحك أبدًا."
+  }
+}

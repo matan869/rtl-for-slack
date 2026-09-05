@@ -1,0 +1,49 @@
+{
+  "extName": {
+    "message": "RTL for Slack: עברית, ערבית ופרסית מימין לשמאל",
+    "description": "Extension name shown in the Chrome Web Store and the browser."
+  },
+  "extDesc": {
+    "message": "לגרום ל-Slack להציג עברית, ערבית, פרסית ואורדו מימין לשמאל: יישור נכון, סוגריים, גופנים וכיוון הקלדה חי.",
+    "description": "Short store description, 132 characters max."
+  },
+  "tagline": {
+    "message": "מימין לשמאל לערבית, פרסית, עברית ואורדו — חינם, בלי חשבון, בלי מפתח רישיון."
+  },
+  "extension": {
+    "message": "התוסף"
+  },
+  "on": {
+    "message": "פועל"
+  },
+  "off": {
+    "message": "כבוי"
+  },
+  "fontArabic": {
+    "message": "גופן ערבית / פרסית / אורדו"
+  },
+  "fontHebrew": {
+    "message": "גופן עברי"
+  },
+  "fontDefault": {
+    "message": "ברירת מחדל (הגופן של Slack)"
+  },
+  "fontSize": {
+    "message": "גודל טקסט"
+  },
+  "preview": {
+    "message": "שלום, כך ייראה הטקסט · مرحبا، هكذا سيبدو النص"
+  },
+  "reviewAsk": {
+    "message": "התוסף חינמי לגמרי. אם הוא עוזר, ביקורת קצרה זה כל מה שאני מבקש."
+  },
+  "reviewLink": {
+    "message": "כתיבת ביקורת ↗"
+  },
+  "footerA": {
+    "message": "חל מיד על Slack — בלי לרענן."
+  },
+  "footerB": {
+    "message": "שום דבר כאן לא יוצא מהדפדפן שלך."
+  }
+}

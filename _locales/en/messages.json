@@ -1,0 +1,49 @@
+{
+  "extName": {
+    "message": "RTL for Slack: Arabic, Persian & Hebrew Right-to-Left",
+    "description": "Extension name shown in the Chrome Web Store and the browser."
+  },
+  "extDesc": {
+    "message": "Make Slack read right-to-left in Arabic, Persian, Urdu and Hebrew: correct alignment, brackets, fonts and live typing direction.",
+    "description": "Short store description, 132 characters max."
+  },
+  "tagline": {
+    "message": "Right-to-left for Arabic, Persian, Hebrew and Urdu — free, no account, no license key."
+  },
+  "extension": {
+    "message": "Extension"
+  },
+  "on": {
+    "message": "On"
+  },
+  "off": {
+    "message": "Off"
+  },
+  "fontArabic": {
+    "message": "Arabic / Persian / Urdu font"
+  },
+  "fontHebrew": {
+    "message": "Hebrew font"
+  },
+  "fontDefault": {
+    "message": "Default (Slack's font)"
+  },
+  "fontSize": {
+    "message": "Font size"
+  },
+  "preview": {
+    "message": "مرحبا، هكذا سيبدو النص · שלום, כך ייראה הטקסט"
+  },
+  "reviewAsk": {
+    "message": "This extension is completely free. If it helps, a quick review is all I ask."
+  },
+  "reviewLink": {
+    "message": "Leave a review ↗"
+  },
+  "footerA": {
+    "message": "Applies instantly to Slack — no reload needed."
+  },
+  "footerB": {
+    "message": "Nothing here ever leaves your browser."
+  }
+}

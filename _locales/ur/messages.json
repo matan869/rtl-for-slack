@@ -1,0 +1,49 @@
+{
+  "extName": {
+    "message": "RTL for Slack: اردو، عربی اور فارسی دائیں سے بائیں",
+    "description": "Extension name shown in the Chrome Web Store and the browser."
+  },
+  "extDesc": {
+    "message": "Slack کو اردو، عربی، فارسی اور عبرانی کے لیے دائیں سے بائیں بنائیں: درست ترتیب، قوسین، فونٹس اور لائیو ٹائپنگ سمت۔",
+    "description": "Short store description, 132 characters max."
+  },
+  "tagline": {
+    "message": "اردو، عربی، فارسی اور عبرانی کے لیے دائیں سے بائیں — مفت، بغیر اکاؤنٹ، بغیر لائسنس کے۔"
+  },
+  "extension": {
+    "message": "ایکسٹینشن"
+  },
+  "on": {
+    "message": "آن"
+  },
+  "off": {
+    "message": "آف"
+  },
+  "fontArabic": {
+    "message": "عربی / فارسی / اردو فونٹ"
+  },
+  "fontHebrew": {
+    "message": "عبرانی فونٹ"
+  },
+  "fontDefault": {
+    "message": "ڈیفالٹ (Slack کا فونٹ)"
+  },
+  "fontSize": {
+    "message": "فونٹ سائز"
+  },
+  "preview": {
+    "message": "السلام علیکم، آپ کا متن ایسا نظر آئے گا · مرحبا، هكذا سيبدو النص"
+  },
+  "reviewAsk": {
+    "message": "یہ ایکسٹینشن مکمل طور پر مفت ہے۔ اگر یہ مددگار ہو تو ایک مختصر ریویو ہی کافی ہے۔"
+  },
+  "reviewLink": {
+    "message": "ریویو لکھیں ↗"
+  },
+  "footerA": {
+    "message": "Slack پر فوراً لاگو ہوتا ہے — ری لوڈ کی ضرورت نہیں۔"
+  },
+  "footerB": {
+    "message": "یہاں سے کچھ بھی آپ کے براؤزر سے باہر نہیں جاتا۔"
+  }
+}

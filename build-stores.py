@@ -9,7 +9,9 @@ import json, zipfile, pathlib
 
 ROOT = pathlib.Path(__file__).parent
 SHIP = ["manifest.json", "content.js", "styles.css", "popup.html", "popup.js"]
-SHIP_DIRS = ["icons", "fonts"]
+# `_locales` MUST ship: with `default_locale` set, Chrome refuses to load the
+# extension at all if the default locale's messages.json is missing.
+SHIP_DIRS = ["icons", "fonts", "_locales"]
 
 manifest = json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))
 version = manifest["version"]
