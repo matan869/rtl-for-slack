@@ -13,6 +13,11 @@
   @font-face { font-family: 'RTLHeb Frank Ruhl Libre'; src: url('fonts/FrankRuhlLibre.woff2') format('woff2'); font-display: swap; }
   @font-face { font-family: 'RTLHeb Secular One'; src: url('fonts/SecularOne.woff2') format('woff2'); font-display: swap; }
   @font-face { font-family: 'RTLHeb Suez One'; src: url('fonts/SuezOne.woff2') format('woff2'); font-display: swap; }
+  @font-face { font-family: 'RTLHeb Vazirmatn'; src: url('fonts/Vazirmatn.woff2') format('woff2'); font-display: swap; }
+  @font-face { font-family: 'RTLHeb Cairo'; src: url('fonts/Cairo.woff2') format('woff2'); font-display: swap; }
+  @font-face { font-family: 'RTLHeb Noto Naskh Arabic'; src: url('fonts/NotoNaskhArabic.woff2') format('woff2'); font-display: swap; }
+  @font-face { font-family: 'RTLHeb IBM Plex Sans Arabic'; src: url('fonts/IBMPlexSansArabic.woff2') format('woff2'); font-display: swap; }
+  @font-face { font-family: 'RTLHeb Noto Nastaliq Urdu'; src: url('fonts/NotoNastaliqUrdu.woff2') format('woff2'); font-display: swap; }
 
   :root { color-scheme: light dark; }
   body {
@@ -192,7 +197,7 @@
 <body>
   <main class="popup-shell">
     <h1>RTL for Slack</h1>
-    <p class="tagline">Hebrew &amp; Arabic right-to-left — free, no account, no license key.</p>
+    <p class="tagline">Right-to-left for Arabic, Persian, Hebrew and Urdu — free, no account, no license key.</p>
 
     <div class="toggle-row">
       <div class="toggle-copy">
@@ -206,6 +211,16 @@
     </div>
 
     <fieldset class="settings-controls" id="settingsControls">
+      <label for="fontArabic">Arabic / Persian / Urdu font</label>
+      <select id="fontArabic">
+        <option value="default">Default (Slack's font)</option>
+        <option value="vazirmatn">Vazirmatn</option>
+        <option value="cairo">Cairo</option>
+        <option value="naskh">Noto Naskh Arabic</option>
+        <option value="plex">IBM Plex Sans Arabic</option>
+        <option value="nastaliq">Noto Nastaliq Urdu</option>
+      </select>
+
       <label for="font">Hebrew font</label>
       <select id="font">
         <option value="default">Default (Slack's font)</option>
@@ -224,7 +239,7 @@
         <output id="fontSizeOut"></output>
       </div>
 
-      <div class="preview" id="preview">שלום, כך ייראה הטקסט שלך</div>
+      <div class="preview" id="preview" dir="rtl">مرحبا، هكذا سيبدو النص · שלום, כך ייראה הטקסט</div>
     </fieldset>
 
     <aside class="review-card" aria-label="Support this free extension">

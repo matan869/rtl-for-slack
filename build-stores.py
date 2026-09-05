@@ -39,6 +39,9 @@ ff["browser_specific_settings"] = {
 }
 
 for label, (path, size) in {
+    # Chrome and Edge take the shared manifest unchanged; they are separate
+    # files only so an upload can never reach for the wrong store's build.
+    "chrome":  build(f"rtl-for-slack-chrome-v{version}.zip"),
     "edge":    build(f"rtl-for-slack-edge-v{version}.zip"),
     "firefox": build(f"rtl-for-slack-firefox-v{version}.zip", ff),
 }.items():

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "RTL for Slack: Hebrew & Arabic Right-to-Left",
-  "version": "1.2.0",
-  "description": "Make Slack right-to-left for Hebrew & Arabic — fix alignment, parentheses, fonts & typing direction. Free, no account. New 2026.",
+  "name": "RTL for Slack: Arabic, Persian & Hebrew Right-to-Left",
+  "version": "1.3.0",
+  "description": "Make Slack read right-to-left in Arabic, Persian, Urdu and Hebrew: correct alignment, brackets, fonts and live typing direction.",
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",

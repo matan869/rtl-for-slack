@@ -1,10 +1,21 @@
-The seven Hebrew fonts bundled in this extension (fonts/*.woff2) are each
+The twelve fonts bundled in this extension (fonts/*.woff2) — seven Hebrew and
+five Arabic-script — are each
 licensed under the SIL Open Font License, Version 1.1, which explicitly
 permits bundling/embedding/redistributing them with software, including
 selling that software, provided this notice and the license text travel
 with them (condition 2 below). None of the fonts are sold on their own.
 
 Per-font copyright:
+
+Arabic-script fonts (added in v1.3.0):
+Copyright (c) 2015-2023 The Vazirmatn Project Authors (https://github.com/rastikerdar/vazirmatn).
+Copyright (c) 2020 The Cairo Project Authors (https://github.com/Gue3bara/Cairo).
+Copyright 2022 The Noto Project Authors (https://github.com/notofonts/arabic).
+Copyright 2022 The Noto Project Authors (https://github.com/notofonts/nastaliq).
+Copyright (c) 2017 IBM Corp. (https://github.com/IBM/plex), with Reserved Font Name 'Plex'.
+IBM Plex is a trademark of IBM Corp. in the United States and/or other countries.
+
+Hebrew fonts:
 
 Copyright 2020 The Assistant Project Authors (https://github.com/hafontia/Assistant).
 Copyright 2010 The Source Sans Pro Authors (https://github.com/adobe-fonts/source-sans-pro), with Reserved Font Name 'Source'.

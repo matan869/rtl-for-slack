@@ -14,15 +14,26 @@
   const ext = (typeof browser !== 'undefined' && browser.storage) ? browser
     : (typeof chrome !== 'undefined' ? chrome : undefined);
 
-  // RTL scripts we react to (Hebrew + Arabic). Ranges:
+  // RTL scripts we react to. The Arabic script block (U+0600-06FF) is shared by
+  // Arabic, Persian/Farsi, Urdu, Pashto, Kurdish (Sorani), Sindhi and Uyghur —
+  // their extra letters live inside it and in the supplements below, so one set
+  // of ranges covers all of them. Ranges:
   //   Hebrew U+0590-05FF, Hebrew presentation forms U+FB1D-FB4F,
-  //   Arabic U+0600-06FF, Arabic Supplement U+0750-077F,
-  //   Arabic Extended-A U+08A0-08FF, Arabic Presentation Forms-A U+FB50-FDFF,
-  //   Arabic Presentation Forms-B U+FE70-FEFF.
-  const RTL_RE = /[֐-׿יִ-ﭏ؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿]/g;
+  //   Arabic U+0600-06FF, Syriac U+0700-074F, Arabic Supplement U+0750-077F,
+  //   Thaana U+0780-07BF (Dhivehi), NKo U+07C0-07FF,
+  //   Arabic Extended-B U+0870-089F, Arabic Extended-A U+08A0-08FF,
+  //   Arabic Presentation Forms-A U+FB50-FDFF, Forms-B U+FE70-FEFF.
+  const RTL_RE = /[֐-׿יִ-ﭏ؀-߿ࡰ-ࣿﭐ-﷿ﹰ-﻿]/g;
   // Basic Latin + Latin-1 Supplement + Latin Extended-A letters
   const HEBREW_RE = /[֐-׿יִ-ﭏ]/g;
-  const ARABIC_RE = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿]/g;
+  const ARABIC_RE = /[؀-ۿݐ-ݿࡰ-ࣿﭐ-﷿ﹰ-﻿]/g;
+  // Letters only Urdu (and Shahmukhi Punjabi) uses: TTEH, DDAL, RREH,
+  // NOON GHUNNA, HEH DOACHASHMEE, HEH GOAL, YEH BARREE.
+  const URDU_RE = /[ٹڈڑںھہۃےۓ]/g;
+  // Letters that mark Persian/Farsi. Urdu uses these too, so this is only
+  // consulted after the Urdu test: PEH, TCHEH, JEH, GAF, and the Persian forms
+  // of kaf/yeh/heh that Arabic proper does not use.
+  const PERSIAN_RE = /[پچژگکیۀ]/g;
   const LATIN_RE = /[A-Za-zÀ-ɏ]/g;
 
   // An embedded LTR run (English word etc.) to isolate so its brackets do not
@@ -31,7 +42,7 @@
   // belongs to the adjacent RTL text — e.g. in Hebrew "...Gorgias (bracketed
   // Hebrew)" it matches "Gorgias", not "Gorgias (". A directly-enclosing
   // bracket pair is re-added after so "(chrome extension)" keeps its parens.
-  const LTR_CORE_RE = /[A-Za-z0-9](?:[^֐-׿יִ-ﭏ؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿]*[A-Za-z0-9])?/g;
+  const LTR_CORE_RE = /[A-Za-z0-9](?:[^֐-׿יִ-ﭏ؀-߿ࡰ-ࣿﭐ-﷿ﹰ-﻿]*[A-Za-z0-9])?/g;
   const OPEN_BRACKET = { "(": ")", "[": "]", "{": "}" };
   const LTR_CLASS = "rtlheb-ltr";
   // Never wrap inside these — links, code, and Slack mention/broadcast pills
@@ -45,6 +56,11 @@
   const MARKER_ATTR = 'data-rtlheb';
   let extensionEnabled = false;
 
+  // Hebrew families. Every face below is declared with a Hebrew-only
+  // unicode-range, and the Arabic families with an Arabic-only one, so a single
+  // font stack can hold one of each and the browser picks per character. That
+  // is why a mixed Hebrew/Arabic/Persian message needs no per-message font
+  // logic — see buildFontStack().
   const FONT_FAMILIES = {
     assistant: "'RTLHeb Assistant', sans-serif",
     rubik: "'RTLHeb Rubik', sans-serif",
@@ -55,21 +71,50 @@
     suez: "'RTLHeb Suez One', serif"
   };
 
+  // Arabic-script families, for Arabic, Persian/Farsi, Urdu, Pashto, Kurdish
+  // and Sindhi. Vazirmatn is the default because it is the standard modern
+  // Persian UI face and covers Arabic properly too; Noto Nastaliq Urdu is the
+  // Nastaliq style Urdu is actually written in, which no other Slack RTL
+  // extension ships.
+  const FONT_FAMILIES_AR = {
+    vazirmatn: "'RTLHeb Vazirmatn', sans-serif",
+    cairo: "'RTLHeb Cairo', sans-serif",
+    naskh: "'RTLHeb Noto Naskh Arabic', serif",
+    plex: "'RTLHeb IBM Plex Sans Arabic', sans-serif",
+    nastaliq: "'RTLHeb Noto Nastaliq Urdu', serif"
+  };
+
   // Secular One and Suez One are single-weight families (400 only);
   // the rest ship a true 700 so bold Hebrew isn't browser-synthesized.
+  // Unicode ranges each face is limited to. Keeping them disjoint is what lets
+  // the Hebrew choice and the Arabic choice live in the same font stack.
+  const HEBREW_RANGE = 'U+0590-05FF, U+FB1D-FB4F, U+200C-200F, U+20AA';
+  const ARABIC_RANGE = 'U+0600-06FF, U+0750-077F, U+0870-088E, U+08A0-08FF, '
+    + 'U+FB50-FDFF, U+FE70-FEFF, U+200C-200F, U+2010-2011, U+204F, U+2E41, U+FDFD';
+
   const FONT_FACES = [
-    { family: 'RTLHeb Assistant', file: 'Assistant.woff2', weight: '400' },
-    { family: 'RTLHeb Assistant', file: 'Assistant700.woff2', weight: '700' },
-    { family: 'RTLHeb Rubik', file: 'Rubik.woff2', weight: '400' },
-    { family: 'RTLHeb Rubik', file: 'Rubik700.woff2', weight: '700' },
-    { family: 'RTLHeb Heebo', file: 'Heebo.woff2', weight: '400' },
-    { family: 'RTLHeb Heebo', file: 'Heebo700.woff2', weight: '700' },
-    { family: 'RTLHeb Noto Sans Hebrew', file: 'NotoSansHebrew.woff2', weight: '400' },
-    { family: 'RTLHeb Noto Sans Hebrew', file: 'NotoSansHebrew700.woff2', weight: '700' },
-    { family: 'RTLHeb Frank Ruhl Libre', file: 'FrankRuhlLibre.woff2', weight: '400' },
-    { family: 'RTLHeb Frank Ruhl Libre', file: 'FrankRuhlLibre700.woff2', weight: '700' },
-    { family: 'RTLHeb Secular One', file: 'SecularOne.woff2', weight: '400' },
-    { family: 'RTLHeb Suez One', file: 'SuezOne.woff2', weight: '400' }
+    { family: 'RTLHeb Assistant', file: 'Assistant.woff2', weight: '400', range: HEBREW_RANGE },
+    { family: 'RTLHeb Assistant', file: 'Assistant700.woff2', weight: '700', range: HEBREW_RANGE },
+    { family: 'RTLHeb Rubik', file: 'Rubik.woff2', weight: '400', range: HEBREW_RANGE },
+    { family: 'RTLHeb Rubik', file: 'Rubik700.woff2', weight: '700', range: HEBREW_RANGE },
+    { family: 'RTLHeb Heebo', file: 'Heebo.woff2', weight: '400', range: HEBREW_RANGE },
+    { family: 'RTLHeb Heebo', file: 'Heebo700.woff2', weight: '700', range: HEBREW_RANGE },
+    { family: 'RTLHeb Noto Sans Hebrew', file: 'NotoSansHebrew.woff2', weight: '400', range: HEBREW_RANGE },
+    { family: 'RTLHeb Noto Sans Hebrew', file: 'NotoSansHebrew700.woff2', weight: '700', range: HEBREW_RANGE },
+    { family: 'RTLHeb Frank Ruhl Libre', file: 'FrankRuhlLibre.woff2', weight: '400', range: HEBREW_RANGE },
+    { family: 'RTLHeb Frank Ruhl Libre', file: 'FrankRuhlLibre700.woff2', weight: '700', range: HEBREW_RANGE },
+    { family: 'RTLHeb Secular One', file: 'SecularOne.woff2', weight: '400', range: HEBREW_RANGE },
+    { family: 'RTLHeb Suez One', file: 'SuezOne.woff2', weight: '400', range: HEBREW_RANGE },
+    // Arabic-script faces. Vazirmatn, Cairo, Noto Naskh Arabic and Noto
+    // Nastaliq Urdu are VARIABLE fonts — Google serves one file for every
+    // weight, so each ships once with a 100-900 range instead of a 400 and a
+    // 700 copy of the same bytes. IBM Plex Sans Arabic is static, hence two.
+    { family: 'RTLHeb Vazirmatn', file: 'Vazirmatn.woff2', weight: '100 900', range: ARABIC_RANGE },
+    { family: 'RTLHeb Cairo', file: 'Cairo.woff2', weight: '100 900', range: ARABIC_RANGE },
+    { family: 'RTLHeb Noto Naskh Arabic', file: 'NotoNaskhArabic.woff2', weight: '400 700', range: ARABIC_RANGE },
+    { family: 'RTLHeb IBM Plex Sans Arabic', file: 'IBMPlexSansArabic.woff2', weight: '400', range: ARABIC_RANGE },
+    { family: 'RTLHeb IBM Plex Sans Arabic', file: 'IBMPlexSansArabic700.woff2', weight: '700', range: ARABIC_RANGE },
+    { family: 'RTLHeb Noto Nastaliq Urdu', file: 'NotoNastaliqUrdu.woff2', weight: '400 700', range: ARABIC_RANGE }
   ];
 
   // A relative url() in content_scripts CSS resolves against the *host
@@ -82,13 +127,13 @@
     // The content script can run in more than one app.slack.com frame; only
     // inject the @font-face block once per document.
     if (document.getElementById('rtlheb-fontfaces')) return;
-    const rules = FONT_FACES.map(({ family, file, weight }) => `
+    const rules = FONT_FACES.map(({ family, file, weight, range }) => `
 @font-face {
   font-family: '${family}';
   src: url('${ext.runtime.getURL('fonts/' + file)}') format('woff2');
   font-weight: ${weight};
   font-display: swap;
-  unicode-range: U+0590-05FF, U+FB1D-FB4F, U+200C-200F, U+20AA;
+  unicode-range: ${range};
 }`).join('\n');
     const style = document.createElement('style');
     style.id = 'rtlheb-fontfaces';
@@ -112,7 +157,15 @@
   function langFor(text) {
     const he = (text.match(HEBREW_RE) || []).length;
     const ar = (text.match(ARABIC_RE) || []).length;
-    return ar > he ? "ar" : "he";
+    if (ar <= he) return "he";
+    // Arabic-script text is not necessarily Arabic. Tagging Persian or Urdu as
+    // `ar` makes the browser shape it with Arabic conventions and reach for an
+    // Arabic font, which renders the Persian yeh/kaf wrong and Urdu wholesale —
+    // Urdu expects a Nastaliq face, not a Naskh one. Urdu is tested first
+    // because Urdu also uses every Persian letter.
+    if ((text.match(URDU_RE) || []).length) return "ur";
+    if ((text.match(PERSIAN_RE) || []).length) return "fa";
+    return "ar";
   }
 
   // --- messages --------------------------------------------------------------
@@ -326,6 +379,27 @@
     root.style.removeProperty('--rtlheb-font-size');
   }
 
+  // One stack holds the Hebrew choice AND the Arabic-script choice. Because the
+  // two sets of @font-face rules declare disjoint unicode-ranges, the browser
+  // resolves each character to the right family on its own — so a channel with
+  // Hebrew, Arabic and Persian messages side by side needs no per-message work,
+  // and a message mixing them renders every script in its chosen font.
+  function buildFontStack(settings) {
+    const he = settings && settings.font ? FONT_FAMILIES[settings.font] : null;
+    const ar = settings && settings.fontArabic ? FONT_FAMILIES_AR[settings.fontArabic] : null;
+    if (!he && !ar) return null;
+    const names = [];
+    // Named families first, generic fallback last — a generic keyword swallows
+    // everything after it.
+    [ar, he].forEach((entry) => {
+      if (!entry) return;
+      names.push(entry.split(',')[0].trim());
+    });
+    const generic = (he || ar).split(',').pop().trim();
+    names.push(generic);
+    return names.join(', ');
+  }
+
   function applySettings(settings) {
     const root = document.documentElement;
     if (!extensionEnabled) {
@@ -333,9 +407,9 @@
       root.style.removeProperty('--rtlheb-font-size');
       return;
     }
-    const fontFamily = settings && settings.font ? FONT_FAMILIES[settings.font] : null;
-    if (fontFamily) {
-      root.style.setProperty('--rtlheb-font', fontFamily);
+    const stack = buildFontStack(settings);
+    if (stack) {
+      root.style.setProperty('--rtlheb-font', stack);
     } else {
       root.style.removeProperty('--rtlheb-font');
     }
@@ -364,7 +438,7 @@
 
   async function refreshSettings() {
     try {
-      const settings = await ext.storage.local.get(['enabled', 'font', 'fontSize']);
+      const settings = await ext.storage.local.get(['enabled', 'font', 'fontArabic', 'fontSize']);
       applyEnabledState(settings);
     } catch (error) {
       console.error('Could not load RTL for Slack settings:', error);
@@ -378,7 +452,7 @@
     void refreshSettings();
     ext.storage.onChanged.addListener((changes, area) => {
       if (area !== 'local') return;
-      if (!changes.enabled && !changes.font && !changes.fontSize) return;
+      if (!changes.enabled && !changes.font && !changes.fontArabic && !changes.fontSize) return;
       void refreshSettings();
     });
   } else {

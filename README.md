@@ -1,16 +1,22 @@
-# RTL for Slack — Hebrew & Arabic right-to-left
+# RTL for Slack — Arabic, Persian, Urdu & Hebrew right-to-left
 
-A free browser extension that makes Slack's web client render Hebrew and Arabic
+A free browser extension that makes Slack's web client render Arabic, Persian, Urdu and Hebrew
 right-to-left correctly. Messages align properly, the composer flips direction as
-you type, inline English and parentheses stay where they belong, and you can pick
-a Hebrew font. Slack's own layout — avatars, timestamps, reactions, sidebar —
+you type, inline English and parentheses stay where they belong, Persian and Urdu
+are tagged `fa`/`ur` rather than lumped in as Arabic, and you can pick a font for
+the Arabic script and a font for Hebrew independently (12 bundled, including Noto
+Nastaliq Urdu). Slack's own layout — avatars, timestamps, reactions, sidebar —
 stays exactly where it is.
 
 No account, no license key, no analytics, no network calls. MIT licensed.
 
 **[Add to Chrome (free)](https://chromewebstore.google.com/detail/kkglhicljbajpdbmhohodoafmmnmmdfm)** · [Homepage](https://mpialtd.com/rtl-slack)
 
-![Hebrew, before and after](docs/screenshot-hebrew.png)
+![Arabic in Slack, right-to-left](docs/screenshot-arabic.png)
+
+![Persian in Slack, tagged fa rather than ar](docs/screenshot-persian.png)
+
+![Hebrew in Slack, right-to-left](docs/screenshot-hebrew.png)
 
 ## The bug this fixes
 
@@ -80,7 +86,7 @@ never sees an unrecognized key.
 ## Privacy
 
 Everything runs locally. No analytics, no remote code, no data collection, and no
-network requests at runtime — the seven fonts are bundled rather than fetched. Your
+network requests at runtime — all twelve fonts are bundled rather than fetched. Your
 on/off, font, and size choices live in `storage.local` and never leave the device.
 Permissions are `storage` and `https://app.slack.com/*`, and nothing else.
 
